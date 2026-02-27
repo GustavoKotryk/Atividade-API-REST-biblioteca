@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
 import java.sql.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -131,6 +132,59 @@ public class EmprestimoDAO {
 
         } catch (SQLException e) {
             throw new RuntimeException("Erro ao deletar empréstimo", e);
+        }
+    }
+
+    public List<Emprestimo> buscarPorUsuario(Long usuarioId) {
+        String sql = "SELECT * FROM emprestimo WHERE usuario_id = ?";
+        List<Emprestimo>emprestimos = new ArrayList<>();
+
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setLong(1, usuarioId);
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                Emprestimo emprestimo = new Emprestimo();
+                emprestimo.setId(rs.getLong("id"));
+                emprestimo.setLivroId(rs.getLong("livro_id"));
+                emprestimo.setUsuarioId(rs.getLong("usuario_id"));
+                emprestimo.setDataEmprestimo(rs.getDate("data_emprestimo").toLocalDate());
+
+                Date dataDevolucao = rs.getDate("data_devolucao");
+                if (dataDevolucao != null) {
+                    emprestimo.setDataDevolucao(dataDevolucao.toLocalDate());
+                }
+
+                emprestimos.add(emprestimo);
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Erro ao buscar empréstimos do usuário", e);
+        }
+
+        return emprestimos;
+    }
+
+    public void registrarDevolucao(Long id, LocalDate dataDevolucao) {
+        String sql = "UPDATE emprestimo SET data_devolucao = ? WHERE id = ?";
+
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setDate(1, Date.valueOf(dataDevolucao));
+
+            stmt.setLong(2, id);
+
+            int linhasAfetadas = stmt.executeUpdate();
+
+            if (linhasAfetadas == 0) {
+                throw new RuntimeException("Empréstimo não encontrado para devolução");
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Erro ao registrar devolução", e);
         }
     }
 }
