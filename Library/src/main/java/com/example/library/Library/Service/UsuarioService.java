@@ -11,8 +11,10 @@ import java.util.List;
 @Service
 public class UsuarioService {
 
-    @Autowired
-    private UsuarioDAO usuarioDAO;
+    private final UsuarioDAO usuarioDAO;
+    public UsuarioService(UsuarioDAO usuarioDAO) {
+        this.usuarioDAO = usuarioDAO;
+    }
 
     public Usuario salvar(Usuario usuario) {
         if (usuario.getNome() == null || usuario.getNome().trim().isEmpty()) {

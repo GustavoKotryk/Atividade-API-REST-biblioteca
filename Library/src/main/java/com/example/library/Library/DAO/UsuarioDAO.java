@@ -2,7 +2,7 @@ package com.example.library.Library.DAO;
 
 
 import com.example.library.Library.Model.Usuario;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.example.library.Library.database.Conexao;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
@@ -13,13 +13,11 @@ import java.util.List;
 @Repository
 public class UsuarioDAO {
 
-    @Autowired
-    private DataSource dataSource;
 
     public Usuario salvar(Usuario usuario){
         String sql = "INSERT INTO usuario (id, nome, email) VALUES (?,?,?)";
 
-        try(Connection conn = dataSource.getConnection();
+        try(Connection conn = Conexao.conexao();
             PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)){
 
             stmt.setInt(1, usuario.getId());
@@ -50,7 +48,7 @@ public class UsuarioDAO {
                 """;
         List<Usuario> usuarios = new ArrayList<>();
 
-        try (Connection conn = dataSource.getConnection();
+        try (Connection conn = Conexao.conexao();
         PreparedStatement stmt = conn.prepareStatement(sql);
         ResultSet rs = stmt.executeQuery()){
 
@@ -71,7 +69,7 @@ public class UsuarioDAO {
     public Usuario buscarPorId(int id) throws SQLException{
         String sql = "SELECT id, nome, email WHERE id = ?";
 
-        try(Connection conn = dataSource.getConnection();
+        try(Connection conn = Conexao.conexao();
         PreparedStatement stmt = conn.prepareStatement(sql)){
 
             stmt.setInt(1, id);
@@ -94,7 +92,7 @@ public class UsuarioDAO {
     public void atualizar(Usuario usuario) throws SQLException{
         String sql = "UPDATE usuario SET nome = ?, email = ? WHERE id=?";
 
-        try (Connection conn = dataSource.getConnection();
+        try (Connection conn = Conexao.conexao();
         PreparedStatement stmt = conn.prepareStatement(sql)){
 
             stmt.setString(1, usuario.getNome());
@@ -109,7 +107,7 @@ public class UsuarioDAO {
     public void deletar(int id){
         String sql = "DELETE FROM usuario WHERE id = ?";
 
-        try (Connection conn = dataSource.getConnection();
+        try (Connection conn = Conexao.conexao();
         PreparedStatement stmt = conn.prepareStatement(sql)){
 
             stmt.setInt(1, id);

@@ -1,6 +1,7 @@
 package com.example.library.Library.DAO;
 
 import com.example.library.Library.Model.Emprestimo;
+import com.example.library.Library.database.Conexao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -13,13 +14,10 @@ import java.util.List;
 @Repository
 public class EmprestimoDAO {
 
-    @Autowired
-    private DataSource dataSource;
-
     public Emprestimo salvar(Emprestimo emprestimo) {
         String sql = "INSERT INTO emprestimo (livro_id, usuario_id, data_emprestimo, data_devolucao) VALUES (?,?,?,?,?)";
 
-        try (Connection conn = dataSource.getConnection();
+        try (Connection conn = Conexao.conexao();
              PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
             stmt.setLong(1, emprestimo.getLivroId());
@@ -42,7 +40,7 @@ public class EmprestimoDAO {
                 """;
         List<Emprestimo> emprestimos = new ArrayList<>();
 
-        try (Connection conn = dataSource.getConnection();
+        try (Connection conn = Conexao.conexao();
              PreparedStatement stmt = conn.prepareStatement(sql);
              ResultSet rs = stmt.executeQuery()) {
 
@@ -68,7 +66,7 @@ public class EmprestimoDAO {
     public Emprestimo buscarPorId(Long id) {
         String sql = "SELECT * FROM emprestimo WHERE id = ?";
 
-        try (Connection conn = dataSource.getConnection();
+        try (Connection conn = Conexao.conexao();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setLong(1, id);
@@ -99,7 +97,7 @@ public class EmprestimoDAO {
     public void atualizar(Emprestimo emprestimo) {
         String sql = "UPDATE emprestimo SET livro_id = ?, usuario_id = ?, data_emprestimo = ?, data_devolucao = ? WHERE id = ?";
 
-        try (Connection conn = dataSource.getConnection();
+        try (Connection conn = Conexao.conexao();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setLong(1, emprestimo.getLivroId());
@@ -124,7 +122,7 @@ public class EmprestimoDAO {
     public void deletar(Long id) {
         String sql = "DELETE FROM emprestimo WHERE id = ?";
 
-        try (Connection conn = dataSource.getConnection();
+        try (Connection conn = Conexao.conexao();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setLong(1, id);
@@ -139,7 +137,7 @@ public class EmprestimoDAO {
         String sql = "SELECT * FROM emprestimo WHERE usuario_id = ?";
         List<Emprestimo>emprestimos = new ArrayList<>();
 
-        try (Connection conn = dataSource.getConnection();
+        try (Connection conn = Conexao.conexao();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setLong(1, usuarioId);
@@ -170,7 +168,7 @@ public class EmprestimoDAO {
     public void registrarDevolucao(Long id, LocalDate dataDevolucao) {
         String sql = "UPDATE emprestimo SET data_devolucao = ? WHERE id = ?";
 
-        try (Connection conn = dataSource.getConnection();
+        try (Connection conn = Conexao.conexao();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setDate(1, Date.valueOf(dataDevolucao));

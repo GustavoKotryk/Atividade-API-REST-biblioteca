@@ -11,9 +11,10 @@ import java.util.List;
 @Service
 public class LivroService {
 
-
-    @Autowired
-    private LivroDAO livroDAO;
+    private final LivroDAO livroDAO;
+    public LivroService(LivroDAO livroDAO){
+        this.livroDAO = livroDAO;
+    }
 
     public Livro salvar(Livro livro){
         if(livro.getTitulo() == null || livro.getTitulo().trim().isEmpty()){

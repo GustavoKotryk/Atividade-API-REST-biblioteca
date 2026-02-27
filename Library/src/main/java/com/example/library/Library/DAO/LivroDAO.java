@@ -1,6 +1,7 @@
 package com.example.library.Library.DAO;
 
 import com.example.library.Library.Model.Livro;
+import com.example.library.Library.database.Conexao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -12,14 +13,11 @@ import java.util.List;
 @Repository
 public class LivroDAO {
 
-    @Autowired
-    private DataSource dataSource;
-
     public Livro salvar(Livro livro){
         String sql = "INSERT INTO livro (titulo, autor, ano_publicacao) VALUES (?,?,?)";
 
-        try (Connection conn = dataSource.getConnection();
-        PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)){
+        try (Connection conn = Conexao.conexao();
+             PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)){
 
             stmt.setString(1, livro.getTitulo());
             stmt.setString(2, livro.getAutor());
@@ -49,7 +47,7 @@ public class LivroDAO {
                 """;
         List<Livro> livros = new ArrayList<>();
 
-        try(Connection conn = dataSource.getConnection();
+        try(Connection conn = Conexao.conexao();
         PreparedStatement stmt = conn.prepareStatement(sql);
         ResultSet rs = stmt.executeQuery()){
 
@@ -68,9 +66,9 @@ public class LivroDAO {
     }
 
     public Livro buscarPorId(int id) {
-        String sql = "SELECT id, titulo, autor, ano_publicacao WHERE id = ?";
+        String sql = "SELECT id, titulo, autor, ano_publicacao FROM livro WHERE id = ?";
 
-        try(Connection conn = dataSource.getConnection();
+        try(Connection conn = Conexao.conexao();
         PreparedStatement stmt = conn.prepareStatement(sql)){
 
             stmt.setInt(1, id);
@@ -94,7 +92,7 @@ public class LivroDAO {
     public void atualizar(Livro livro) {
         String sql = "UPDATE livro SET titulo = ?, autor=?, ano_publicacao=? WHERE id=?";
 
-        try (Connection conn = dataSource.getConnection();
+        try (Connection conn = Conexao.conexao();
         PreparedStatement stmt = conn.prepareStatement(sql)){
 
             stmt.setString(1, livro.getTitulo());
@@ -111,7 +109,7 @@ public class LivroDAO {
     public void deletar(int id){
         String sql = "DELETE FROM livro WHERE id = ?";
 
-        try(Connection conn = dataSource.getConnection();
+        try(Connection conn = Conexao.conexao();
         PreparedStatement stmt = conn.prepareStatement(sql)){
 
             stmt.setInt(1, id);
