@@ -67,7 +67,7 @@ public class UsuarioDAO {
 
 
     public Usuario buscarPorId(int id) throws SQLException{
-        String sql = "SELECT id, nome, email WHERE id = ?";
+        String sql = "SELECT id, nome, email FROM usuario WHERE id = ?";
 
         try(Connection conn = Conexao.conexao();
         PreparedStatement stmt = conn.prepareStatement(sql)){
@@ -97,6 +97,7 @@ public class UsuarioDAO {
 
             stmt.setString(1, usuario.getNome());
             stmt.setString(2, usuario.getEmail());
+            stmt.setInt(3, usuario.getId());
 
             stmt.executeUpdate();
         } catch (SQLException e){

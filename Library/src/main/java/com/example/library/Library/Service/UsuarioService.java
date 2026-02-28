@@ -35,12 +35,11 @@ public class UsuarioService {
     }
 
     public Usuario buscarPorId(int id) throws SQLException {
-        Usuario usuario = usuarioDAO.buscarPorId(id);
 
-        return usuario;
+        return usuarioDAO.buscarPorId(id);
     }
 
-    public void atualizar(Usuario usuario) throws SQLException {
+    public Usuario atualizar(Usuario usuario) throws SQLException {
 
         buscarPorId(usuario.getId());
 
@@ -55,6 +54,7 @@ public class UsuarioService {
         }
 
         usuarioDAO.atualizar(usuario);
+        return usuario;
     }
 
     public void deletar(int id) {
